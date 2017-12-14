@@ -28,7 +28,10 @@ int iShape[4][4][4] = {
         }
 };
 
-int map[10][10] = {};
+const int WIDTH = 10;
+const int HEIGHT = 10;
+
+int map[WIDTH][HEIGHT] = {};
 
 struct Position{
     int x;
@@ -40,6 +43,7 @@ private:
     int rotation = 0;
     int x, y;
     int(*shape)[4][4][4];
+
 
     bool checkCollisionX(int direction) {
         int newX = x + direction;
@@ -88,7 +92,7 @@ private:
     }
 
     bool isInBounds(int x) {
-        return x >= 0 && x < 10;
+        return x >= 0 && x < WIDTH;
     }
 
     bool checkCollisionRotation(int x, int y) {
@@ -188,14 +192,14 @@ public:
             std::vector<Position> positions = getIntersections();
 
             int maxIntersectedX = -1;
-            int minIntersectedX = 10;
+            int minIntersectedX = WIDTH;
             int maxFreeX = -1;
-            int minFreeX = 10;
+            int minFreeX = WIDTH;
 
             int maxIntersectedY = -1;
-            int minIntersectedY = 10;
+            int minIntersectedY = HEIGHT;
             int maxFreeY = -1;
-            int minFreeY = 10;
+            int minFreeY = HEIGHT;
 
 
             for(int i=0; i < positions.size(); ++i){
@@ -275,13 +279,54 @@ public:
 };
 
 void drawMap() {
-    for (int i = 0; i < 10; ++i) {
-        for (int j = 0; j < 10; ++j) {
+    for (int i = 0; i < HEIGHT; ++i) {
+        for (int j = 0; j < WIDTH; ++j) {
             std::cout << map[i][j] << " ";
         }
         std::cout << std::endl;
     }
 }
+
+void clearRow(int row){
+    for(int j=0; j < WIDTH; ++j){
+        map[row][j] = 0;
+    }
+}
+
+void move(int from, int to){
+    for(int i=0; i < WIDTH; ++i){
+        map[to][i] = map[from][i];
+    }
+    clearRow(from);
+}
+
+void moveRows(int to){
+    for(int i=to-1; i >=0; --i){
+        move(i, i+1);
+    }
+    clearRow(0);
+}
+
+void clearFullRows(){
+    for(int i=0; i < HEIGHT; ++i){
+        bool isFull = true;
+        for(int j=0; j < WIDTH; ++j){
+            if(map[i][j] == 0){
+                isFull = false;
+                break;
+            }
+        }
+        if(isFull){
+            std::cout << "full row "<< i << std::endl;
+            clearRow(i);
+            moveRows(i);
+        }
+    }
+}
+
+
+
+
 
 
 int main() {
@@ -289,6 +334,7 @@ int main() {
     const int moveDown = 2;
     const int moveRight = 3;
     const int rotate = 4;
+    const int scores = 5;
 
     Shape shape;
     int command = 0;
@@ -307,6 +353,9 @@ int main() {
                 break;
             case rotate:
                 shape.rotate();
+                break;
+            case scores:
+                clearFullRows();
                 break;
             default:
                 break;
