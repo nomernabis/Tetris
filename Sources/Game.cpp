@@ -21,7 +21,14 @@ Game::Game(){
     shape->interface = this;
     infoScreen->setNextShapeId(shape->getNextShape());
 }
-
+void Game::clearGame(){
+    for(int i=0; i < HEIGHT; ++i){
+        for(int j=0; j < WIDTH; ++j){
+            map[i][j] = 0;
+        }
+    }
+    infoScreen->setLines(0);
+}
 void Game::run() {
     m_running = true;
     float elapsed = 0;
@@ -136,18 +143,30 @@ void Game::countScores(){
 }
 
 void Game::setCommands() {
-    Command startCommand;
-    startCommand.name = "Start";
-    startCommand.action = [this](){
-        m_running = true;
-    };
+    if(!m_loose){
+        Command startCommand;
+        startCommand.name = "Start";
+        startCommand.action = [this](){
+            m_running = true;
+        };
+        controlBox->addCommand(startCommand);
+    } else {
+        Command replay;
+        replay.name = "Replay";
+        replay.action = [this](){
+            m_running = true;
+            m_loose = false;
+            controlBox->clearCommands();
+            setCommands();
+        };
+        controlBox->addCommand(replay);
+    }
 
     Command exitCommand;
     exitCommand.name = "Exit";
     exitCommand.action = [this](){
         mainWindow.close();
     };
-    controlBox->addCommand(startCommand);
     controlBox->addCommand(exitCommand);
 }
 
@@ -155,4 +174,7 @@ void Game::message() {
     //MessageInterface::message();
     m_running = false;
     m_loose = true;
+    controlBox->clearCommands();
+    setCommands();
+    clearGame();
 }

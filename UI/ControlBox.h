@@ -17,6 +17,7 @@ public:
     void setFont(sf::Font font);
     void addCommand(Command command){commands.push_back(command);}
     void handleEvents(sf::Event event);
+    inline void clearCommands(){ commands.clear(); }
 private:
     sf::RenderWindow* window;
     sf::RectangleShape rect;
@@ -24,9 +25,7 @@ private:
     sf::Font font;
     sf::Text text;
     std::vector<Command> commands;
-
     void drawCommands();
-
     int curIndex = 0;
 };
 

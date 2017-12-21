@@ -78,7 +78,7 @@ ControlBox::ControlBox(sf::RenderWindow &window, std::string title, sf::Font fon
 }
 
 void ControlBox::setTitle(std::string title) {
-    m_title = title;
+    m_title = std::move(title);
 }
 
 void ControlBox::setFont(sf::Font font) {

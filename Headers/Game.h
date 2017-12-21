@@ -25,7 +25,7 @@ private:
     void moveRows(int to);
     void countScores();
     void message();
-
+    void clearGame();
     int map[HEIGHT][WIDTH] = {};
     bool m_running = false;
     bool m_loose = false;
